@@ -11,6 +11,7 @@ Provides:
 import os
 import copy
 
+from client.ayon_core.pipeline.publish.lib import get_publish_template_name
 import pyblish.api
 
 
@@ -70,7 +71,7 @@ class CollectResourcesPath(pyblish.api.InstancePlugin):
                 "sbsar",
                 ]
 
-    def process(self, instance):
+    def process(self, instance: pyblish.api.Instance):
         anatomy = instance.context.data["anatomy"]
 
         template_data = copy.deepcopy(instance.data["anatomyData"])
@@ -82,8 +83,17 @@ class CollectResourcesPath(pyblish.api.InstancePlugin):
             "representation": "TEMP"
         })
 
+        task_entity = instance.data.get("taskEntity", {})
+        template_name = get_publish_template_name(
+            project_name=anatomy.project_name,
+            host_name=instance.context.data.get("hostName"),
+            product_type=instance.data["productType"],
+            task_name=task_entity.get("name"),
+            task_type=task_entity.get("taskType"),
+            project_settings=instance.context.data["project_settings"],
+        )
         publish_templates = anatomy.get_template_item(
-            "publish", "default", "directory"
+            "publish", template_name, "directory"
         )
         publish_folder = os.path.normpath(
             publish_templates.format_strict(template_data)
