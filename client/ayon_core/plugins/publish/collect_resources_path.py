@@ -11,7 +11,7 @@ Provides:
 import os
 import copy
 
-from client.ayon_core.pipeline.publish.lib import get_publish_template_name
+from ayon_core.pipeline.publish.lib import get_publish_template_name
 import pyblish.api
 
 
